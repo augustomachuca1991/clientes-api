@@ -73,4 +73,14 @@ class Client extends Model
         );
     }
 
+
+
+    public function scopeSearchClient($query, $value){
+        if ($value) {
+            $query->where('nombres' , 'LIKE' , '%'.$value.'%')
+            ->orWhere('apellidos' , 'LIKE' , '%'.$value.'%')
+            ->orWhere('email' , 'LIKE' , '%'.$value.'%');
+        }
+    }
+
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ClientRequest;
+use App\Http\Requests\{ClientStoreRequest, ClientUpdateRequest};
 use Illuminate\Http\Request;
 use App\Models\Client;
 
@@ -15,17 +15,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return Client::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return Client::paginate(10);
     }
 
     /**
@@ -34,7 +24,7 @@ class ClientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ClientRequest $request)
+    public function store(ClientStoreRequest $request)
     {
 
         $validated = $request->validated();
@@ -46,34 +36,56 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\client  $client
+     * @param  \App\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show($client_id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Client $client)
-    {
-        //
+        return Client::find($client_id);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\client  $client
+     * @param  \App\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Client $client)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nombres' => 'required'
+        ]);
+        $client = Client::find($id);
+        $client->update($request->all());
+        return $client;
+    }
+
+
+
+    /**
+     * delete the specified resource in storage.
+     *
+     * @param  \App\Client  $client
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $client = Client::find($id);
+        $client->delete();
+        return 'client delete';
+    }
+
+
+
+    /**
+     * search the specified resource in storage.
+     *
+     * @param  \App\Client  $client
+     * @return \Illuminate\Http\Response
+     */
+    public function search($value)
+    {
+        return Client::searchClient($value)->paginate(10);
     }
 }
