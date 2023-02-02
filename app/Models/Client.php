@@ -68,7 +68,8 @@ class Client extends Model
                 return $value;
             },
             get: function ($value) {
-                return $value;
+                $cuil = substr($value, 0, 2).'-'.substr($value, 2, 8).'-'.substr($value, -1);
+                return $cuil ;
             }
         );
     }

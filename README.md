@@ -1,16 +1,33 @@
-# PHP + Laravel
-
-# 1) composer install
-# 2) cp .env.example .env (configure params DB)
-# 3) php artisan key:generate
-# 4) php artisan migrate --seed
-# 5) php artisan serve
+## Api Clients With Laravel 9
 
 
+## Project Setup
+
+```sh
+1) composer install
 ```
 
+```sh
+2) cp .env.example .env (configure params DB)
+```
+
+```sh
+3) php artisan key:generate
+```
+
+```sh
+4) php artisan migrate
+```
+
+```sh
+5) php artisan serve o php artisan serve --port=xxxx (especificar puesto)
+```
+
+```
+hearders {Accept:application/json}
+
 ---------------------
-CAMPOS TABLA CLIENTS
+TABLA CLIENTS
 --------------------
 nombres'
 apellidos'

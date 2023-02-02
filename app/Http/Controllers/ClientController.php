@@ -9,83 +9,95 @@ use App\Models\Client;
 class ClientController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * index lista todos los clientes.
      *
-     * @return \Illuminate\Http\Response
+     * @return Array Client
      */
     public function index()
     {
-        return Client::paginate(10);
+        $clients = Client::paginate(10);
+        return response()->json($clients);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * store da de alta un nuevo cliente.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return Client $new_client
      */
     public function store(ClientStoreRequest $request)
     {
 
         $validated = $request->validated();
         $new_client = Client::create($request->all());
-        return $new_client;
+        $data = [
+            'message' => 'client created successfully',
+            'data' => $new_client
+        ];
+        return response()->json($data);
 
     }
 
     /**
-     * Display the specified resource.
+     * show muestra un cliente especifico.
      *
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
+     * @param  id
+     * @return Client $client
      */
     public function show($client_id)
     {
-        return Client::find($client_id);
+        $client = Client::find($client_id);
+        return response()->json($client);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update actualiza los datos de un cliente.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  $id
+     * @return Client $client
      */
-    public function update(Request $request, $id)
+    public function update(ClientUpdateRequest $request, $id)
     {
-        $request->validate([
-            'nombres' => 'required'
-        ]);
+        $validated = $request->validated();
         $client = Client::find($id);
         $client->update($request->all());
-        return $client;
+        $data = [
+            'message' => 'client updated successfully',
+            'data' => $client
+        ];
+        return response()->json($data);
     }
 
 
 
     /**
-     * delete the specified resource in storage.
+     * destroy se encarga de elimiar(baja logica) un cliente.
      *
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return String $string
      */
     public function destroy($id)
     {
         $client = Client::find($id);
         $client->delete();
-        return 'client delete';
+        $data = [
+            'message' => 'client deleted successfully',
+            'data' => $client
+        ];
+        return response()->json($data);
     }
 
 
 
     /**
-     * search the specified resource in storage.
+     * search busca coincidencias por nombres,apellidos y/o email.
      *
-     * @param  \App\Client  $client
-     * @return \Illuminate\Http\Response
+     * @param  $value
+     * @return Array Client
      */
     public function search($value)
     {
-        return Client::searchClientkghklv  ($value)->paginate(10);
+        return response()->json(Client::searchClient($value)->paginate(10));
     }
 }
