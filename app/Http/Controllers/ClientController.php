@@ -86,6 +86,6 @@ class ClientController extends Controller
      */
     public function search($value)
     {
-        return Client::searchClient($value)->paginate(10);
+        return Client::searchClientkghklv  ($value)->paginate(10);
     }
 }
