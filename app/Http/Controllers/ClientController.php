@@ -8,6 +8,7 @@ use App\Models\Client;
 
 class ClientController extends Controller
 {
+
     /**
      * index lista todos los clientes.
      *
@@ -16,8 +17,10 @@ class ClientController extends Controller
     public function index()
     {
         $clients = Client::paginate(10);
-        return response()->json($clients);
+        return response()->json(['data' => $clients , 'msg' => 'ok', 'status' => 200]);
     }
+
+
 
     /**
      * store da de alta un nuevo cliente.
@@ -27,16 +30,18 @@ class ClientController extends Controller
      */
     public function store(ClientStoreRequest $request)
     {
+        try {
+            $validated = $request->validated();
+            $new_client = Client::create($request->all());
+            return response()->json(['data' => $new_client,'message' => 'client created successfully','status' => 200]);
+        } catch (\Throwable $th) {
+            return response()->json(['data' => [],'message' => $th->getMessage() ,'status' => 422]);
+        }
 
-        $validated = $request->validated();
-        $new_client = Client::create($request->all());
-        $data = [
-            'message' => 'client created successfully',
-            'data' => $new_client
-        ];
-        return response()->json($data);
 
     }
+
+
 
     /**
      * show muestra un cliente especifico.
@@ -47,8 +52,13 @@ class ClientController extends Controller
     public function show($client_id)
     {
         $client = Client::find($client_id);
-        return response()->json($client);
+        if (!$client) {
+            return response()->json(['data' => $client,'msg' => 'client not found','status' => 404]);
+        }
+        return response()->json(['data' => $client,'msg' => 'ok','status' => 200]);
     }
+
+
 
     /**
      * Update actualiza los datos de un cliente.
@@ -59,14 +69,19 @@ class ClientController extends Controller
      */
     public function update(ClientUpdateRequest $request, $id)
     {
-        $validated = $request->validated();
-        $client = Client::find($id);
-        $client->update($request->all());
-        $data = [
-            'message' => 'client updated successfully',
-            'data' => $client
-        ];
-        return response()->json($data);
+        try {
+            $validated = $request->validated();
+            $client = Client::find($id);
+            if (!$client) {
+                return response()->json(['data' => $client,'message' => 'client not found','status' => 404]);
+            }
+            $client->update($request->all());
+            return response()->json(['data' => $client,'message' => 'client updated successfully','status' => 200]);
+        } catch (\Throwable $th) {
+            return response()->json(['data' => [],'message' => $th->getMessage() ,'status' => 422]);
+        }
+
+
     }
 
 
@@ -79,14 +94,19 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        $client = Client::find($id);
-        $client->delete();
-        $data = [
-            'message' => 'client deleted successfully',
-            'data' => $client
-        ];
-        return response()->json($data);
+        try {
+            $client = Client::find($id);
+            if (!$client) {
+                return response()->json(['data' => $client, 'msg' => 'client not found', 'status' => 404]);
+            }
+            $client->delete();
+            return response()->json(['data' => $client,'msg' => 'client deleted successfully','status' => 200]);
+        } catch (\Throwable $th) {
+            return response()->json(['data' => [],'message' => $th->getMessage() ,'status' => 500]);
+        }
+
     }
+
 
 
 
@@ -98,6 +118,7 @@ class ClientController extends Controller
      */
     public function search($value)
     {
-        return response()->json(Client::searchClient($value)->paginate(10));
+        $clients = Client::searchClient($value)->paginate(10);
+        return response()->json(['data' => $clients , 'msg' => 'ok', 'status' => 200]);
     }
 }

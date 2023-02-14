@@ -40,7 +40,11 @@ class ClientStoreRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         if ($validator->fails()) {
-            Log::channel('daily')->info($validator->errors());
+            Log::channel('daily')->info(['response' => [
+                'data' => $validator->errors(),
+                'msj' => 'error de validacion',
+                'status' => 422
+            ]]);
         }
     }
 }
